@@ -18,15 +18,14 @@ pipeline {
                 stage('Build backend') {
                     steps {
                         dir('src/backend') {
-                            sh 'npm install'
+                            sh 'rm -rf node_modules && npm install'
                         }
                     }
                 }
                 stage('Build frontend') {
                     steps {
                         dir('src/frontend') {
-                            sh 'ls'
-                            sh 'npm install'
+                            sh 'rm -rf node_modules && npm install'
                         }
                     }
                 }
@@ -41,13 +40,13 @@ pipeline {
                         }
                     }
                 }
-                // stage('Test frontend'){
-                //     steps {
-                //         dir('src/frontend') {
-                //             sh 'npm test'
-                //         }
-                //     }
-                // }
+                stage('Test frontend'){
+                    steps {
+                        dir('src/frontend') {
+                            sh 'npm test'
+                        }
+                    }
+                }
             }
         }
  

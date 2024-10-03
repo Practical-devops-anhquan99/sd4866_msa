@@ -8,18 +8,14 @@ pipeline {
                 sh 'node --version'
             }
         }
-        stage('Build') {
-            parallel {
-                stage('Build backend'){
-                    steps {
-                        sh 'cd src/backend && npm install'
-                    }
-                }
-                stage('Build frontend'){
-                    steps {
-                        sh 'cd src/frontend && npm install'
-                    }
-                }
+        stage('Build backend') {
+            steps {
+                sh 'cd src/backend && npm install'
+            }
+        }
+        stage('Build frontend') {
+            steps {
+                sh 'cd ../frontend && npm install'
             }
         }
         stage('Test'){

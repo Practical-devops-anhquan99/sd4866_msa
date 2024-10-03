@@ -2,6 +2,10 @@ pipeline {
     agent {
         docker  { image 'node:alpine'}
     }
+    environment {
+        HOME = '.'
+        npm_config_cache = 'npm-cache'
+    }
     stages {
         stage("Node version") {
             steps {

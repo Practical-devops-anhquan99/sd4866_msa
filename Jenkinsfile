@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker  { image 'node:lts-buster'}
+        docker  { image 'node:alpine'}
     }
     stages {
         stage("Node version") {

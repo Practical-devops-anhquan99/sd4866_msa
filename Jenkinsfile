@@ -12,10 +12,12 @@ pipeline {
             steps {
                 // sh 'rm package-lock.json'
                 sh "pwd" 
+                sh 'ls'
                 dir('src/backend') {
                     sh "pwd"
+                    sh 'ls'
                 }
-                sh 'ls'
+                
             }
         }
         // stage('Build backend') {

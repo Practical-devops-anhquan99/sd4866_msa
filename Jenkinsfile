@@ -7,7 +7,7 @@ pipeline {
         npm_config_cache = 'npm-cache'
     }
     stages {
-        stage("Node version") {
+        stage('Node version') {
             steps {
                 sh 'node --version'
             }
@@ -15,7 +15,7 @@ pipeline {
         stage('Location'){
             steps {
                 dir('src/backend') {
-                    sh "npm install"
+                    sh 'npm install'
                 }
                 
             }
@@ -26,14 +26,14 @@ pipeline {
                 stage('Build backend') {
                     steps {
                         dir('src/backend') {
-                            sh "npm install"
+                            sh 'npm install'
                         }
                     }
                 }
                 stage('Build frontend') {
                     steps {
                         dir('src/frontend') {
-                            sh "npm install"
+                            sh 'npm install'
                         }
                     }
                 }
@@ -44,14 +44,15 @@ pipeline {
                 stage('Test backend'){
                     steps {
                         dir('src/backend') {
-                            sh "npm test"
+                            sh 'npm test'
                         }
                     }
                 }
                 stage('Test frontend'){
                     steps {
                         dir('src/frontend') {
-                            sh "npm test"
+                            sh 'ls node_modules | grep babel'
+                            sh 'npm test'
                         }
                     }
                 }

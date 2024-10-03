@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker  { image 'node:alpine'}
+        docker  { image 'node:20-alpine'}
     }
     environment {
         HOME = '.'
@@ -10,14 +10,6 @@ pipeline {
         stage('Node version') {
             steps {
                 sh 'node --version'
-            }
-        }
-        stage('Location'){
-            steps {
-                dir('src/backend') {
-                    sh 'npm install'
-                }
-                
             }
         }
         stage('Build')

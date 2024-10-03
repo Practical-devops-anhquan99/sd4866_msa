@@ -3,12 +3,6 @@ pipeline {
         docker  { image 'node:alpine'}
     }
     stages {
-        stage('Change working directory'){
-            steps {
-                sh 'cd ~/'
-                checkout scm
-            }
-        }
         stage("Node version") {
             steps {
                 sh 'node --version'
@@ -17,7 +11,7 @@ pipeline {
         stage('Location'){
             steps {
                 // sh 'rm package-lock.json'
-                sh 'pwd'
+                sh 'cd src/backend '
                 sh 'ls'
             }
         }

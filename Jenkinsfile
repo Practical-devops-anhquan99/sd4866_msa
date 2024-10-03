@@ -8,8 +8,6 @@ pipeline {
                 sh 'node --version'
             }
         }
-    }
-    stages {
         stage('Build') {
             parallel {
                 stage('Build backend'){

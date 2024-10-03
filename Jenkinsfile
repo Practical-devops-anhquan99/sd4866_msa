@@ -10,7 +10,7 @@ pipeline {
         }
         stage('Build backend') {
             steps {
-                sh 'ls'
+                sh 'ls && cat package-lock.json'
                 // sh 'cd src/backend && rm -rf node_modules'
                 // sh 'npm install'
             }

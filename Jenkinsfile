@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('Change working directory'){
             steps {
-                sh 'cd ~'
+                sh 'cd ~/'
                 checkout scm
             }
         }

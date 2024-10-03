@@ -11,7 +11,10 @@ pipeline {
         stage('Location'){
             steps {
                 // sh 'rm package-lock.json'
-                sh 'cd src/backend '
+                sh "pwd" 
+                dir('src/backend') {
+                    sh "pwd"
+                }
                 sh 'ls'
             }
         }

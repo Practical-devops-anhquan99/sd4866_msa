@@ -10,12 +10,14 @@ pipeline {
         }
         stage('Build backend') {
             steps {
-                sh 'cd src/backend && npm install'
+                sh 'cd src/backend && rm -f node_modules'
+                sh 'npm install'
             }
         }
         stage('Build frontend') {
             steps {
-                sh 'cd ../frontend && npm install'
+                sh 'cd ../frontend && rm -f node_modules'
+                sh 'npm install'
             }
         }
         stage('Test'){

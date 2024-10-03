@@ -8,11 +8,15 @@ pipeline {
                 sh 'node --version'
             }
         }
+        stage('Remove package-lock.json'){
+            steps {
+                sh 'rm package-lock.json'
+            }
+        }
         stage('Build backend') {
             steps {
-                sh 'ls && cat package-lock.json'
-                // sh 'cd src/backend && rm -rf node_modules'
-                // sh 'npm install'
+                sh 'cd src/backend && rm -rf node_modules'
+                sh 'npm install'
             }
         }
         // stage('Build frontend') {

@@ -51,7 +51,7 @@ pipeline {
                 stage('Test frontend'){
                     steps {
                         dir('src/frontend') {
-                            sh 'ls node_modules | grep babel'
+                            sh 'ls node_modules/@babel'
                             sh 'npm test'
                         }
                     }

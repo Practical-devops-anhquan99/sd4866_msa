@@ -1,5 +1,12 @@
 pipeline {
-    agent any
+    agent {
+        docker  { image 'node:lts-buster'}
+    }
+    stages {
+        stage("Node version") {
+            sh 'node --version'
+        }
+    }
     stages {
         stage('Build') {
             parallel {

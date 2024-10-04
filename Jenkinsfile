@@ -9,7 +9,8 @@ pipeline {
                 withSonarQubeEnv(installationName: 'SonarQube') { 
                     sh '${scannerHome}/bin/sonar-scanner --version'
                     dir('src/backend') {
-                        sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
+                        sh '${scannerHome}/bin/sonar-scanner'
+                        // sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
                     }
                 }
             }

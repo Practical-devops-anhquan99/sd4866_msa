@@ -6,11 +6,11 @@ pipeline {
     stages {
         stage('SonarQube Analysis') {
             steps {
-                sh 'curl -I localhost:9000'
+                sh 'curl -I http://localhost:9000/api/v2/analysis/jres?os=linux&arch=x86_64'
                 withSonarQubeEnv(installationName: 'SonarQube') { 
                     sh '${scannerHome}/bin/sonar-scanner --version'
                     dir('src/backend') {
-                        sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000'
+                        sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
                         // sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
                     }
                 }

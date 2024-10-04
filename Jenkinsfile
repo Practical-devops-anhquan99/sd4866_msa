@@ -6,6 +6,7 @@ pipeline {
     stages {
         stage('SonarQube Analysis') {
             steps {
+                sh 'curl -I localhost:9000'
                 withSonarQubeEnv(installationName: 'SonarQube') { 
                     sh '${scannerHome}/bin/sonar-scanner --version'
                     dir('src/backend') {

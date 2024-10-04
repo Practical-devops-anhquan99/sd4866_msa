@@ -1,13 +1,9 @@
 pipeline {
     agent any
-    environment {
-        SCANNER_HOME = tool 'SonarQubeScanner'
-    }
-
     stages {
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv(installationName: 'YourSonarQubeInstallation') { 
+                withSonarQubeEnv(installationName: 'SonarQube') { 
                     dir('src/backend') {
                         sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
                     }

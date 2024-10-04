@@ -5,10 +5,20 @@ pipeline {
     }
 
     stages {
-        stage('Scan') {
+        stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh "${SCANNER_HOME}/bin/sonar-scanner"
+                withSonarQubeEnv(installationName: 'YourSonarQubeInstallation') { 
+                    dir('src/backend') {
+                        sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') { 
+                    waitForQualityGate abortPipeline: true 
                 }
             }
         }

@@ -9,7 +9,7 @@ pipeline {
                 withSonarQubeEnv(installationName: 'SonarQube') { 
                     sh '${scannerHome}/bin/sonar-scanner --version'
                     dir('src/backend') {
-                        sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=.'
+                        sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000'
                         // sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
                     }
                 }

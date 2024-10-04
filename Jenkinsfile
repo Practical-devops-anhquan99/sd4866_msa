@@ -7,10 +7,10 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv(installationName: 'SonarQube') { 
-                    // dir('src/backend') {
-                    //     sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
-                    // }
                     sh '${scannerHome}/bin/sonar-scanner --version'
+                    dir('src/backend') {
+                        sh 'sonar-scanner -Dsonar. -Dsonar.sources=.' 
+                    }
                 }
             }
         }

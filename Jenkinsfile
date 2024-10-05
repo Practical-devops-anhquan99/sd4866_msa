@@ -3,28 +3,31 @@ pipeline {
         HOME = '.'
         npm_config_cache = 'npm-cache'
     }
-
+    agent any
     stages {
         stage('SonarQube scan') {
             agent {
                 label 'Built-In Node'
             }
-            stages('SonarQube A\nalysis') {
-                steps {
-                    withSonarQubeEnv(installationName: 'SonarQube') { 
-                        sh '${scannerHome}/bin/sonar-scanner --version'
-                        dir('src/backend') {
-                            sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
+            stages {
+                stage('SonarQube Analysis') {
+                    steps {
+                        withSonarQubeEnv(installationName: 'SonarQube') { 
+                            sh '${scannerHome}/bin/sonar-scanner --version'
+                            dir('src/backend') {
+                                sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
+                            }
                         }
                     }
                 }
-            }
-            stages('Quality Gate') {
-                steps {
-                    timeout(time: 5, unit: 'MINUTES') { 
-                        waitForQualityGate abortPipeline: true 
+                stage('Quality Gate')  {
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') { 
+                            waitForQualityGate abortPipeline: true 
+                        }
                     }
                 }
+                
             }
         }
 

@@ -145,7 +145,7 @@ pipeline {
                         }
                         stage('Scan frontend image') {
                             steps {
-                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
+                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION'
                             }
                         }
                     }

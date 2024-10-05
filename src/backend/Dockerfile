@@ -10,7 +10,7 @@ COPY . .
 # Run vulnerability scan on build image
 FROM development AS vulnscan
 COPY --from=aquasec/trivy:latest /usr/local/bin/trivy /usr/local/bin/trivy
-RUN trivy rootfs --no-progress /
+RUN trivy rootfs --exit-code 1 --no-progress /
 
 # Production stage (no build step here)
 FROM node:alpine AS production

@@ -7,6 +7,7 @@ pipeline {
         CR_FRONTEND = 'anhquan99/msa-frontend' 
         DOCKER_USERNAME = credentials('docker-username')
         DOCKER_PASSWORD = credentials('docker-password')
+        NEED_TRIVY = credentials('need-trivy')
     }
     agent any
     stages {
@@ -99,7 +100,7 @@ pipeline {
                 }
             }
             stages {
-                 stage('Versioning') {
+                 stage('Versioning image') {
                     steps {
                         script {
                             env.COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse HEAD | cut -c1-7").trim()
@@ -117,7 +118,7 @@ pipeline {
                         echo 'Build version: $BUILD_VERSION'
                     }
                 }
-                stage('Build') {
+                stage('Build image') {
                     parallel {
                         stage('Build backend image') {
                             steps {
@@ -131,6 +132,20 @@ pipeline {
                                 dir('src/frontend') {
                                     sh 'docker build -t  $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION -t $CR_FRONTEND:$CONTAINER_TAG-latest .'
                                 }
+                            }
+                        }
+                    }
+                }
+                stage('Scan image vulnerabilities') {
+                    parallel {
+                        stage('Scan backend image') {
+                            steps {
+                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
+                            }
+                        }
+                        stage('Scan frontend image') {
+                            steps {
+                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION'
                             }
                         }
                     }
@@ -155,8 +170,23 @@ pipeline {
                             }
                         }
                     }
-                }              
+                }            
             }
-        }        
+        }
+        stage('Clean up') {
+            agent {
+                label 'Built-In'
+            }
+            when {
+                not {
+                    branch 'PR-*'
+                }
+            }
+            steps {
+                sh 'docker rmi -f $(docker images | grep $CR_BACKEND | tr -s " " | cut -d " " -f 3)'
+                sh 'docker rmi -f $(docker images | grep $CR_FRONTEND | tr -s " " | cut -d " " -f 3)'
+                cleanWs() 
+            }
+        }     
     }
 }

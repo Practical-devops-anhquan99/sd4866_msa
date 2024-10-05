@@ -104,7 +104,7 @@ pipeline {
                             {
                                 env.CONTAINER_TAG = 'release'
                             }
-                            else (env.BRANCH_NAME == 'dev')
+                            else if(env.BRANCH_NAME == 'dev')
                             {
                                 env.CONTAINER_TAG = 'dev'
                             }

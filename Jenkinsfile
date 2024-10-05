@@ -25,7 +25,7 @@ pipeline {
                             {
                                 env.CONTAINER_TAG = 'release'
                             }
-                            else
+                            else if (env.BRANCH_NAME == 'sonar')
                             {
                                 env.CONTAINER_TAG = 'sonar'
                             }

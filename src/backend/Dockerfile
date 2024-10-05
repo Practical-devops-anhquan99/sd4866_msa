@@ -8,7 +8,7 @@ RUN npm ci
 COPY . .
 
 # Run vulnerability scan on build image
-FROM build AS vulnscan
+FROM development AS vulnscan
 COPY --from=aquasec/trivy:latest /usr/local/bin/trivy /usr/local/bin/trivy
 RUN trivy rootfs --no-progress /
 

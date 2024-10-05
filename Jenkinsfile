@@ -56,7 +56,7 @@ pipeline {
                 } 
                 stage('Scan') {
                     steps {
-                        sh 'trivy image $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
+                        sh 'trivy image  --no-progress --exit-code 1 --severity HIGH,CRITICAL $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
                     }
                 }           
             }

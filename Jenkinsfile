@@ -117,7 +117,6 @@ pipeline {
                         stage('Build backend image') {
                             steps {
                                 dir('src/backend') {
-                                    if()
                                     sh 'docker build -t  $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION -t $CR_BACKEND:$CONTAINER_TAG-latest .'
                                 }
                             }

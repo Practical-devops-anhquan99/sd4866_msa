@@ -1,24 +1,5 @@
-FROM node:lts-buster-slim AS development
+FROM alpine:3.7
 
-WORKDIR /usr/src/app
-
-COPY package*.json ./ 
-RUN npm ci
-
-COPY . .
-
-# Run vulnerability scan on build image
-FROM development AS vulnscan
-COPY --from=aquasec/trivy:latest /usr/src/app /usr/local/bin/trivy
-RUN trivy rootfs --no-progress /
-
-# Production stage (no build step here)
-FROM node:alpine AS production
-
-WORKDIR /usr/src/app
-
-COPY --from=development /usr/src/app . 
-
-EXPOSE 3000
-
-CMD [ "npm", "run", "dev" ]
+RUN apk add curl \
+    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin \
+    && trivy rootfs --exit-code 1 --no-progress /

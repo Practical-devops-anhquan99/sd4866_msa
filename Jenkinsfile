@@ -2,6 +2,7 @@ pipeline {
     environment {
         HOME = '.'
         npm_config_cache = 'npm-cache'
+        scannerHome = tool 'SonarQube scanner'
     }
     agent any
     stages {

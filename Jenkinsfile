@@ -185,8 +185,14 @@ pipeline {
             steps {
                 sh 'docker rmi -f $(docker images | grep $CR_BACKEND | tr -s " " | cut -d " " -f 3)'
                 sh 'docker rmi -f $(docker images | grep $CR_FRONTEND | tr -s " " | cut -d " " -f 3)'
-                cleanWs() 
             }
         }     
+    }
+    post {
+        always {
+            cleanWs(deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true)
+        }
     }
 }

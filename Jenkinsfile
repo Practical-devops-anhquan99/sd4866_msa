@@ -93,6 +93,11 @@ pipeline {
             agent {
                 label 'Built-In'
             }
+            when {
+                not {
+                    branch 'PR-*'
+                }
+            }
             stages {
                  stage('Versioning') {
                     steps {

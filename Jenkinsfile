@@ -10,7 +10,7 @@ pipeline {
                     env.COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse HEAD | cut -c1-7").trim()
                     env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%d%m%y'").trim()
                 }
-                echo '$env.BUILD_DATE-$env.COMMIT_HASH-$env.BUILD_NUMBER'
+                sh 'printenv'
             }
         }
     }

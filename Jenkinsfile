@@ -1,7 +1,9 @@
 pipeline {
     environment {
         CR_BACKEND = 'anhquan99/msa-backend'
-        CR_FRONTEND = 'anhquan99/msa-frontend' 
+        CR_FRONTEND = 'anhquan99/msa-frontend'
+        DOCKER_USERNAME = credentials('docker-username')
+        DOCKER_PASSWORD = credentials('docker-password')
     }
     agent any
     stages {

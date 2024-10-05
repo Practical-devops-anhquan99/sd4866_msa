@@ -54,7 +54,7 @@ pipeline {
                 } 
                 stage('Scan') {
                     steps {
-                        sh 'trivy $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
+                        sh 'trivy image $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
                     }
                 }           
             }

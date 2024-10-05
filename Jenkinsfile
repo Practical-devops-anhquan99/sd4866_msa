@@ -25,7 +25,7 @@ pipeline {
                             {
                                 env.CONTAINER_TAG = 'release'
                             }
-                            else (env.BRANCH_NAME == 'sonar')
+                            else if (env.BRANCH_NAME == 'sonar')
                             {
                                 env.CONTAINER_TAG = 'sonar'
                             }
@@ -34,45 +34,6 @@ pipeline {
                         sh 'printenv'
                     }
                 }
-                // stage('Build') {
-                //     parallel {
-                //         stage('Build backend image') {
-                //             steps {
-                //                 dir('src/backend') {
-                //                     sh 'docker build -t $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION -t $CR_BACKEND:$CONTAINER_TAG-latest .'
-                //                 }
-                //             }
-                //         }
-                //         stage('Build frontend image') {
-                //             steps {
-                //                 dir('src/frontend') {
-                //                     sh 'docker build -t $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION -t $CR_FRONTEND:$CONTAINER_TAG-latest .'
-                //                 }
-                //             }
-                //         }
-                //     }
-                // } 
-                // stage('Log into container registry') {
-                //     steps {
-                //         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                //     }
-                // } 
-                // stage('Push image') {
-                //     parallel {
-                //         stage('Push backend image'){
-                //             steps{
-                //                 sh 'docker push $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
-                //                 sh 'docker push $CR_BACKEND:$CONTAINER_TAG-latest'
-                //             }
-                //         }
-                //         stage('Push frontend image'){
-                //             steps{
-                //                 sh 'docker push $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION'
-                //                 sh 'docker push $CR_FRONTEND:$CONTAINER_TAG-latest'
-                //             }
-                //         }
-                //     }
-                // }              
             }
         }        
     }

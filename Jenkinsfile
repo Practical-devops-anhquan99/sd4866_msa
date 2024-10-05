@@ -26,6 +26,7 @@ pipeline {
                             env.COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse HEAD | cut -c1-7").trim()
                             env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%d%m%y'").trim()
                             env.BUILD_VERSION = env.BUILD_DATE + env.COMMIT_HASH + env.BUILD_DATE
+                            env.CONTAINER_TAG = env.BRANCH_NAME
                             if (env.BRANCH_NAME == 'master')
                             {
                                 env.CONTAINER_TAG = 'release'
@@ -34,11 +35,8 @@ pipeline {
                             {
                                 env.CONTAINER_TAG = 'dev'
                             }
-                            else {
-                                env.CONTAINER_TAG = env.BRANCH_NAME
-                            }
                         }
-                        echo 'Build version: $BUILD_VERSION'
+                        echo 'Build version: ' + env.BUILD_VERSION
                     }
                 }
                 stage('Build') {

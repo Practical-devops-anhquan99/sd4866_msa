@@ -1,4 +1,4 @@
-FROM node:lts-buster-slim AS development
+FROM node:20-slim AS development
 
 WORKDIR /usr/src/app
 

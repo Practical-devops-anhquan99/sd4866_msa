@@ -6,7 +6,9 @@ pipeline {
 
     stages {
         stage('SonarQube scan') {
-            agent 'Built-In Node'
+            agent {
+                label 'Built-In Node'
+            }
             stages('SonarQube A\nalysis') {
                 steps {
                     withSonarQubeEnv(installationName: 'SonarQube') { 

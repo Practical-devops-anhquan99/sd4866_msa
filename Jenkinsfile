@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('SonarQube scan') {
             agent {
-                label 'Built-In Node'
+                label 'Built-In'
             }
             stages {
                 stage('SonarQube Analysis') {
@@ -91,7 +91,7 @@ pipeline {
         }
         stage('Build and publish image'){
             agent {
-                label 'Built-In Node'
+                label 'Built-In'
             }
             stages {
                  stage('Versioning') {

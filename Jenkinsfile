@@ -26,7 +26,7 @@ pipeline {
                             env.COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse HEAD | cut -c1-7").trim()
                             env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%d%m%y'").trim()
                             env.BUILD_VERSION = env.BUILD_DATE + env.COMMIT_HASH + env.BUILD_DATE
-                            env.CONTAINER_TAG = env.BRANCH_NAME
+                            env.CONTAINER_TAG = 'trivy'
                             if (env.BRANCH_NAME == 'master')
                             {
                                 env.CONTAINER_TAG = 'release'

@@ -128,19 +128,29 @@ pipeline {
                                 }
                             }
                         }
-                        stage('Log into container registry') {
-                            steps {
-                                sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                    }
+                } 
+                stage('Log into container registry') {
+                    steps {
+                        sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                    }
+                } 
+                stage('Push image') {
+                    parallel {
+                        stage('Push backend image'){
+                            steps{
+                                sh 'docker push $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
+                                sh 'docker push $CR_BACKEND:$CONTAINER_TAG-latest'
                             }
                         }
-                        stage('Pus docker image'){
+                        stage('Push frontend image'){
                             steps{
                                 sh 'docker push $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION'
                                 sh 'docker push $CR_FRONTEND:$CONTAINER_TAG-latest'
                             }
                         }
                     }
-                }                
+                }              
             }
         }        
     }

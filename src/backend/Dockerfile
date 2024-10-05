@@ -8,7 +8,7 @@ RUN npm ci
 COPY . .
 
 # Production stage (no build step here)
-FROM node:lts-alpine AS production
+FROM node:alpine AS production
 
 WORKDIR /usr/src/app
 

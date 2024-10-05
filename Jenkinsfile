@@ -25,12 +25,13 @@ pipeline {
                             {
                                 env.CONTAINER_TAG = 'release'
                             }
-                            else (env.BRANCH_NAME == 'dev')
+                            else (env.BRANCH_NAME == 'sonar')
                             {
-                                env.CONTAINER_TAG = 'dev'
+                                env.CONTAINER_TAG = 'sonar'
                             }
                         }
-                        echo 'Build version: $BUILD_VERSION'
+                        sh "echo 'Build version: $BUILD_VERSION'"
+                        sh 'printenv'
                     }
                 }
                 // stage('Build') {

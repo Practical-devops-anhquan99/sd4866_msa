@@ -169,6 +169,11 @@ pipeline {
                                 sh 'docker push $CR_FRONTEND:$CONTAINER_TAG-latest'
                             }
                         }
+                        stage('Test'){
+                            steps{
+                                echo 'Test'
+                            }
+                        }
                     }
                 }            
             }

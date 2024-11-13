@@ -115,6 +115,9 @@ pipeline {
                             {
                                 env.CONTAINER_TAG = 'dev'
                             }
+                            else {
+                                env.CONTAINER_TAG = 'test'
+                            }
                         }
                         echo 'Build version: $BUILD_VERSION'
                     }

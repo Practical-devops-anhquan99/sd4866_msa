@@ -7,8 +7,8 @@ pipeline {
         CR_FRONTEND = credentials('cr-frontend')
         ECR_URI = credentials('ecr_uri')
         NEED_TRIVY = credentials('need-trivy')
-        BACKEND_TAG = "${ECR_URI}/${CR_BACKEND}"
-        FRONTEND_TAG = "${ECR_URI}/${CR_FRONTEND}"
+        BACKEND_IMAGE = "${ECR_URI}/${CR_BACKEND}"
+        FRONTEND_IMAGE = "${ECR_URI}/${CR_FRONTEND}"
     }
     agent any
     stages {
@@ -127,14 +127,14 @@ pipeline {
                         stage('Build backend image') {
                             steps {
                                 dir('src/backend') {
-                                    sh 'docker build -t  $BACKEND_TAG:$CONTAINER_TAG-$BUILD_VERSION -t $BACKEND_TAG:$CONTAINER_TAG-latest .'
+                                    sh 'docker build -t  $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION -t $BACKEND_IMAGE:$CONTAINER_TAG-latest .'
                                 }
                             }
                         }
                         stage('Build frontend image') {
                             steps {
                                 dir('src/frontend') {
-                                    sh 'docker build -t  $FRONTEND_TAG:$CONTAINER_TAG-$BUILD_VERSION -t $FRONTEND_TAG:$CONTAINER_TAG-latest .'
+                                    sh 'docker build -t  $FRONTEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION -t $FRONTEND_IMAGE:$CONTAINER_TAG-latest .'
                                 }
                             }
                         }
@@ -144,12 +144,12 @@ pipeline {
                     parallel {
                         stage('Scan backend image') {
                             steps {
-                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $BACKEND_TAG:$CONTAINER_TAG-$BUILD_VERSION'
+                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
                             }
                         }
                         stage('Scan frontend image') {
                             steps {
-                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $FRONTEND_TAG:$CONTAINER_TAG-$BUILD_VERSION'
+                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $FRONTEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
                             }
                         }
                     }
@@ -160,8 +160,8 @@ pipeline {
                             steps{
                                 withAWS(region:'ap-southeast-2',credentials:'aws-credential') {
                                     sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
-                                    sh 'docker push $BACKEND_TAG:$CONTAINER_TAG-$BUILD_VERSION'
-                                    sh 'docker push $BACKEND_TAG:$CONTAINER_TAG-latest'
+                                    sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
+                                    sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-latest'
                                 }
                                 
                             }
@@ -170,8 +170,8 @@ pipeline {
                             steps{
                                 withAWS(region:'ap-southeast-2',credentials:'aws-credential') {
                                     sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
-                                    sh 'docker push $FRONTEND_TAG:$CONTAINER_TAG-$BUILD_VERSION'
-                                    sh 'docker push $FRONTEND_TAG:$CONTAINER_TAG-latest'
+                                    sh 'docker push $FRONTEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
+                                    sh 'docker push $FRONTEND_IMAGE:$CONTAINER_TAG-latest'
                                 }
                                 
                             }
@@ -190,8 +190,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'docker rmi -f $(docker images | grep $BACKEND_TAG | tr -s " " | cut -d " " -f 3)'
-                sh 'docker rmi -f $(docker images | grep $FRONTEND_TAG | tr -s " " | cut -d " " -f 3)'
+                sh 'docker rmi -f $(docker images | grep $BACKEND_IMAGE | tr -s " " | cut -d " " -f 3)'
+                sh 'docker rmi -f $(docker images | grep $FRONTEND_IMAGE | tr -s " " | cut -d " " -f 3)'
             }
         }     
     }

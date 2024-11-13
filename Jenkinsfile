@@ -119,7 +119,7 @@ pipeline {
                                 env.CONTAINER_TAG = 'test'
                             }
                         }
-                        echo 'Build version: $BUILD_VERSION'
+                        echo 'Build version: ${BUILD_VERSION}'
                     }
                 }
                 stage('Build image') {
@@ -127,14 +127,14 @@ pipeline {
                         stage('Build backend image') {
                             steps {
                                 dir('src/backend') {
-                                    sh 'docker build -t  $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION -t $BACKEND_IMAGE:$CONTAINER_TAG-latest .'
+                                    sh 'docker build -t  ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION} -t ${BACKEND_IMAGE}:${CONTAINER_TAG}-latest .'
                                 }
                             }
                         }
                         stage('Build frontend image') {
                             steps {
                                 dir('src/frontend') {
-                                    sh 'docker build -t  $FRONTEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION -t $FRONTEND_IMAGE:$CONTAINER_TAG-latest .'
+                                    sh 'docker build -t  $"FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION} -t ${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest .'
                                 }
                             }
                         }
@@ -144,14 +144,14 @@ pipeline {
                     parallel {
                         stage('Scan backend image') {
                             steps {
-                                echo 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
-                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
+                                echo 'trivy image  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                                sh 'trivy image  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
                             }
                         }
                         stage('Scan frontend image') {
                             steps {
-                                echo 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $FRONTEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
-                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $FRONTEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
+                                echo 'trivy image  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                                sh 'trivy image  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
                             }
                         }
                     }
@@ -172,8 +172,8 @@ pipeline {
                             steps{
                                 withAWS(region:'ap-southeast-2',credentials:'aws-credential') {
                                     sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
-                                    sh 'docker push $FRONTEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
-                                    sh 'docker push $FRONTEND_IMAGE:$CONTAINER_TAG-latest'
+                                    sh 'docker push ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                                    sh 'docker push ${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest'
                                 }
                                 
                             }

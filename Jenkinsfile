@@ -19,8 +19,8 @@ pipeline {
             stages {
                 stage('Print') {
                     steps {
-                       echo 'Build version: $BACKEND_TAG'
-                       echo 'Build version: $FRONTEND_TAG'
+                       echo 'Build version: ${BACKEND_TAG}'
+                       echo 'Build version: ${FRONTEND_TAG}'
                     }
                 }
             }

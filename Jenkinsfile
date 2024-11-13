@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Build and publish image'){
             agent {
-                label 'Built-In Node'
+                label 'Built-In'
             }
             stages {
                  stage('Versioning') {

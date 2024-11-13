@@ -10,31 +10,30 @@ pipeline {
     }
     agent any
     stages {
-        stage('Build and publish image'){
+        stage('SonarQube scan') {
             agent {
                 label 'Built-In'
             }
             stages {
-                 stage('Versioning') {
+                stage('SonarQube Analysis') {
                     steps {
-                        script {
-                            env.COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse HEAD | cut -c1-7").trim()
-                            env.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%d%m%y'").trim()
-                            env.BUILD_VERSION = env.BUILD_DATE + env.COMMIT_HASH + env.BUILD_DATE
-                            if (env.BRANCH_NAME == 'master')
-                            {
-                                env.CONTAINER_TAG = 'release'
-                            }
-                            else if (env.BRANCH_NAME == 'sonar')
-                            {
-                                env.CONTAINER_TAG = 'sonar'
+                        withSonarQubeEnv(installationName: 'SonarQube scanner') { 
+                            sh '${scannerHome}/bin/sonar-scanner --version'
+                            dir('src/backend') {
+                                sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
                             }
                         }
-                        sh "echo 'Build version: $BUILD_VERSION'"
-                        sh 'printenv'
                     }
                 }
+                stage('Quality Gate')  {
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') { 
+                            waitForQualityGate abortPipeline: true 
+                        }
+                    }
+                }
+                
             }
-        }        
+        }
     }
 }

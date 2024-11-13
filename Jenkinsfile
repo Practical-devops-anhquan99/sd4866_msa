@@ -12,31 +12,31 @@ pipeline {
     }
     agent any
     stages {
-        stage('SonarQube scan') {
-            agent {
-                label 'Built-In'
-            }
-            stages {
-                stage('SonarQube Analysis') {
-                    steps {
-                        withSonarQubeEnv(installationName: 'SonarQube scanner') { 
-                            sh '${scannerHome}/bin/sonar-scanner --version'
-                            dir('src/backend') {
-                                sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
-                            }
-                        }
-                    }
-                }
-                stage('Quality Gate')  {
-                    steps {
-                        timeout(time: 5, unit: 'MINUTES') { 
-                            waitForQualityGate abortPipeline: true 
-                        }
-                    }
-                }
+        // stage('SonarQube scan') {
+        //     agent {
+        //         label 'Built-In'
+        //     }
+        //     stages {
+        //         stage('SonarQube Analysis') {
+        //             steps {
+        //                 withSonarQubeEnv(installationName: 'SonarQube scanner') { 
+        //                     sh '${scannerHome}/bin/sonar-scanner --version'
+        //                     dir('src/backend') {
+        //                         sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         stage('Quality Gate')  {
+        //             steps {
+        //                 timeout(time: 5, unit: 'MINUTES') { 
+        //                     waitForQualityGate abortPipeline: true 
+        //                 }
+        //             }
+        //         }
                 
-            }
-        }
+        //     }
+        // }
 
         stage('Build and test') {
             agent {

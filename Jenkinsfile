@@ -9,6 +9,7 @@ pipeline {
         NEED_TRIVY = credentials('need-trivy')
         BACKEND_IMAGE = "${ECR_URI}/${CR_BACKEND}"
         FRONTEND_IMAGE = "${ECR_URI}/${CR_FRONTEND}"
+        REGION = credentials('aws-region')
     }
     agent any
     stages {
@@ -158,7 +159,7 @@ pipeline {
                     parallel {
                         stage('Push backend image'){
                             steps{
-                                withAWS(region:'ap-southeast-1',credentials:'aws-credential') {
+                                withAWS(region: REGION ,credentials:'aws-credential') {
                                     sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
                                     sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
                                     sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-latest'
@@ -168,7 +169,7 @@ pipeline {
                         }
                         stage('Push frontend image'){
                             steps{
-                                withAWS(region:'ap-southeast-1',credentials:'aws-credential') {
+                                withAWS(region: REGION ,credentials:'aws-credential') {
                                     sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
                                     sh 'docker push ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
                                     sh 'docker push ${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest'

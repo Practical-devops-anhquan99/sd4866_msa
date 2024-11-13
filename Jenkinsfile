@@ -18,7 +18,7 @@ pipeline {
             stages {
                 stage('SonarQube Analysis') {
                     steps {
-                        withSonarQubeEnv(installationName: 'SonarQube') { 
+                        withSonarQubeEnv(installationName: 'SonarQube scanner') { 
                             sh '${scannerHome}/bin/sonar-scanner --version'
                             dir('src/backend') {
                                 sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'

@@ -9,7 +9,7 @@ pipeline {
         NEED_TRIVY = credentials('need-trivy')
         BACKEND_IMAGE = "${ECR_URI}/${CR_BACKEND}"
         FRONTEND_IMAGE = "${ECR_URI}/${CR_FRONTEND}"
-        REGION = credentials('aws-region')
+        REGION = 'ap-southeast-1'
     }
     agent any
     stages {

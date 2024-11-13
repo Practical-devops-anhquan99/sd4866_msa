@@ -180,26 +180,26 @@ pipeline {
                 }            
             }
         }
-        stage('Clean up') {
-            agent {
-                label 'Built-In'
-            }
-            when {
-                not {
-                    branch 'PR-*'
-                }
-            }
-            steps {
-                sh 'docker rmi -f $(docker images | grep $BACKEND_IMAGE | tr -s " " | cut -d " " -f 3)'
-                sh 'docker rmi -f $(docker images | grep $FRONTEND_IMAGE | tr -s " " | cut -d " " -f 3)'
-            }
-        }     
     }
     post {
         always {
             cleanWs(deleteDirs: true,
                     disableDeferredWipeout: true,
                     notFailBuild: true)
+            script {
+                agent {
+                    label 'Built-In'
+                }
+                when {
+                    not {
+                        branch 'PR-*'
+                    }
+                }
+                steps {
+                    sh 'docker rmi -f $(docker images | grep $BACKEND_IMAGE | tr -s " " | cut -d " " -f 3)'
+                    sh 'docker rmi -f $(docker images | grep $FRONTEND_IMAGE | tr -s " " | cut -d " " -f 3)'
+                }
+            }
         }
     }
 }

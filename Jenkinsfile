@@ -134,7 +134,7 @@ pipeline {
                         stage('Build frontend image') {
                             steps {
                                 dir('src/frontend') {
-                                    sh 'docker build -t  $"FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION} -t ${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest .'
+                                    sh 'docker build -t  ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION} -t ${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest .'
                                 }
                             }
                         }

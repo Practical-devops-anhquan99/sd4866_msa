@@ -7,8 +7,8 @@ pipeline {
         CR_FRONTEND = credentials('cr-frontend')
         ECR_URI = credentials('ecr_uri')
         NEED_TRIVY = credentials('need-trivy')
-        def BACKEND_TAG = '${ECR_URI}/${CR_BACKEND}'
-        def FRONTEND_TAG = '${ECR_URI}/${CR_FRONTEND}'
+        BACKEND_TAG = "${ECR_URI}/${CR_BACKEND}"
+        FRONTEND_TAG = "${ECR_URI}/${CR_FRONTEND}"
     }
     agent any
     stages {

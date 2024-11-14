@@ -10,7 +10,7 @@ pipeline {
         BACKEND_IMAGE = "${ECR_URI}/${CR_BACKEND}"
         FRONTEND_IMAGE = "${ECR_URI}/${CR_FRONTEND}"
         REGION = 'ap-southeast-1'
-        EKS = credentials('EKS')
+        EKS = credentials('eks')
     }
     agent any
     stages {

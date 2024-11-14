@@ -13,31 +13,31 @@ pipeline {
     }
     agent any
     stages {
-        // stage('SonarQube scan') {
-        //     agent {
-        //         label 'Built-In'
-        //     }
-        //     stages {
-        //         stage('SonarQube Analysis') {
-        //             steps {
-        //                 withSonarQubeEnv(installationName: 'SonarQube scanner') { 
-        //                     sh '${scannerHome}/bin/sonar-scanner --version'
-        //                     dir('src/backend') {
-        //                         sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         stage('Quality Gate')  {
-        //             steps {
-        //                 timeout(time: 5, unit: 'MINUTES') { 
-        //                     waitForQualityGate abortPipeline: true 
-        //                 }
-        //             }
-        //         }
+        stage('SonarQube scan') {
+            agent {
+                label 'Built-In'
+            }
+            stages {
+                stage('SonarQube Analysis') {
+                    steps {
+                        withSonarQubeEnv(installationName: 'SonarQube scanner') { 
+                            sh '${scannerHome}/bin/sonar-scanner --version'
+                            dir('src/backend') {
+                                sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
+                            }
+                        }
+                    }
+                }
+                stage('Quality Gate')  {
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') { 
+                            waitForQualityGate abortPipeline: true 
+                        }
+                    }
+                }
                 
-        //     }
-        // }
+            }
+        }
 
         stage('Build and test') {
             agent {
@@ -141,20 +141,20 @@ pipeline {
                         }
                     }
                 }
-                // stage('Scan image vulnerabilities') {
-                //     parallel {
-                //         stage('Scan backend image') {
-                //             steps {
-                //                 sh 'trivy image --scanners vuln --skip-db-update --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
-                //             }
-                //         }
-                //         stage('Scan frontend image') {
-                //             steps {
-                //                 sh 'trivy image --scanners vuln --skip-db-update  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
-                //             }
-                //         }
-                //     }
-                // } 
+                stage('Scan image vulnerabilities') {
+                    parallel {
+                        stage('Scan backend image') {
+                            steps {
+                                sh 'trivy image --scanners vuln --skip-db-update --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                            }
+                        }
+                        stage('Scan frontend image') {
+                            steps {
+                                sh 'trivy image --scanners vuln --skip-db-update  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                            }
+                        }
+                    }
+                } 
                 stage('Push image') {
                     parallel {
                         stage('Push backend image'){

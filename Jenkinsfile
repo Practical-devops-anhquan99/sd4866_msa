@@ -9,7 +9,7 @@ pipeline {
         NEED_TRIVY = credentials('need-trivy')
         BACKEND_IMAGE = "${ECR_URI}/${CR_BACKEND}"
         FRONTEND_IMAGE = "${ECR_URI}/${CR_FRONTEND}"
-        REGION = 'ap-southeast-1'
+        REGION = credentials('aws-region')
     }
     agent any
     stages {
@@ -153,8 +153,8 @@ pipeline {
                             steps{
                                 withAWS(region: REGION ,credentials:'aws-credential') {
                                     sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
-                                    sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
-                                    sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-latest'
+                                    sh 'docker push ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                                    sh 'docker push ${BACKEND_IMAGE}:${CONTAINER_TAG}-latest'
                                 }
                                 
                             }
@@ -171,6 +171,21 @@ pipeline {
                         }
                     }
                 }            
+            }
+        }
+        stage('Deploy k8s') {
+            agent {
+                label 'Built-In'
+            }
+            steps {
+                withAWS(region: REGION ,credentials:'aws-credential') {
+                    withCredentials([string(credentialsId: 'eks', variable: 'EKS')]){
+                        sh "aws eks update-kubeconfig --region ${REGION} --name ${EKS}"
+                        sh "find k8s -type f -exec sed -i 's/backend-cr/${ECR_URI}\\/${CR_BACKEND}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +"
+                        sh "find k8s -type f -exec sed -i 's/fronend-cr/${ECR_URI}\\/${CR_FRONTEND}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +" 
+                        sh "kubectl apply -f k8s"
+                    }
+                }
             }
         }
         stage('Clean up') {

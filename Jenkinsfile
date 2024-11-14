@@ -142,15 +142,9 @@ pipeline {
                     }
                 }
                 stage('Scan image vulnerabilities') {
-                    stage('Scan backend image') {
-                        steps {
-                            sh 'trivy image --scanners vuln --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
-                        }
-                    }
-                    stage('Scan frontend image') {
-                        steps {
-                            sh 'trivy image --scanners vuln --skip-db-update  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
-                        }
+                    steps {
+                        sh 'trivy image --scanners vuln --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                        sh 'trivy image --scanners vuln --skip-db-update  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
                     }
                 } 
                 stage('Push image') {

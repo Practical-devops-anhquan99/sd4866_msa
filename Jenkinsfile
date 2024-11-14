@@ -10,7 +10,6 @@ pipeline {
         BACKEND_IMAGE = "${ECR_URI}/${CR_BACKEND}"
         FRONTEND_IMAGE = "${ECR_URI}/${CR_FRONTEND}"
         REGION = 'ap-southeast-1'
-        EKS = credentials('eks')
     }
     agent any
     stages {
@@ -180,10 +179,12 @@ pipeline {
             }
             steps {
                 withAWS(region: REGION ,credentials:'aws-credential') {
-                    sh "aws eks update-kubeconfig --region $REGION --name ${EKS}"
-                    sh "find k8s -type f -exec sed -i 's/backend-cr/$BACKEND_IMAGE:$CONTAINER_TAG-latest/g' {} +"
-                    sh "find k8s -type f -exec sed -i 's/fronend-cr/${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest/g' {} +" 
-                    sh "kubectl apply -f k8s"
+                    withCredentials([string(credentialsId: 'eks', variable: 'EKS')]){
+                        sh "aws eks update-kubeconfig --region $REGION --name ${EKS}"
+                        sh "find k8s -type f -exec sed -i 's/backend-cr/${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +"
+                        sh "find k8s -type f -exec sed -i 's/fronend-cr/${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +" 
+                        sh "kubectl apply -f k8s"
+                    }
                 }
             }
         }

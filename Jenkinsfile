@@ -178,11 +178,7 @@ pipeline {
                 label 'Built-In'
             }
             steps {
-                withAWS(region: REGION ,credentials:'aws-credential') {
-                    // sh "aws eks update-kubeconfig --name sd1121-devops-eks"
-                    // sh "kubectl apply -f k8s"
-                    sh "kubectl get nodes"
-                }
+                sh "kubectl get nodes"
             }
         }
         // stage('Clean up') {

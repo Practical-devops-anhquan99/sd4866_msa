@@ -3,11 +3,13 @@ pipeline {
         HOME = '.'
         npm_config_cache = 'npm-cache'
         scannerHome = tool 'SonarQube scanner'
-        CR_BACKEND = 'anhquan99/msa-backend'
-        CR_FRONTEND = 'anhquan99/msa-frontend' 
-        DOCKER_USERNAME = credentials('docker-username')
-        DOCKER_PASSWORD = credentials('docker-password')
+        CR_BACKEND = credentials('cr-backend')
+        CR_FRONTEND = credentials('cr-frontend')
+        ECR_URI = credentials('ecr_uri')
         NEED_TRIVY = credentials('need-trivy')
+        BACKEND_IMAGE = "${ECR_URI}/${CR_BACKEND}"
+        FRONTEND_IMAGE = "${ECR_URI}/${CR_FRONTEND}"
+        REGION = 'ap-southeast-1'
     }
     agent any
     stages {
@@ -18,7 +20,7 @@ pipeline {
             stages {
                 stage('SonarQube Analysis') {
                     steps {
-                        withSonarQubeEnv(installationName: 'SonarQube') { 
+                        withSonarQubeEnv(installationName: 'SonarQube scanner') { 
                             sh '${scannerHome}/bin/sonar-scanner --version'
                             dir('src/backend') {
                                 sh '${scannerHome}/bin/sonar-scanner -Dsonar. -Dsonar.sources=. -Dsonar.projectKey=MSA'
@@ -114,8 +116,11 @@ pipeline {
                             {
                                 env.CONTAINER_TAG = 'dev'
                             }
+                            else {
+                                env.CONTAINER_TAG = 'test'
+                            }
                         }
-                        echo 'Build version: $BUILD_VERSION'
+                        echo 'Build version: ${BUILD_VERSION}'
                     }
                 }
                 stage('Build image') {
@@ -123,50 +128,45 @@ pipeline {
                         stage('Build backend image') {
                             steps {
                                 dir('src/backend') {
-                                    sh 'docker build -t  $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION -t $CR_BACKEND:$CONTAINER_TAG-latest .'
+                                    sh 'docker build -t  ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION} -t ${BACKEND_IMAGE}:${CONTAINER_TAG}-latest .'
                                 }
                             }
                         }
                         stage('Build frontend image') {
                             steps {
                                 dir('src/frontend') {
-                                    sh 'docker build -t  $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION -t $CR_FRONTEND:$CONTAINER_TAG-latest .'
+                                    sh 'docker build -t  ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION} -t ${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest .'
                                 }
                             }
                         }
                     }
                 }
                 stage('Scan image vulnerabilities') {
-                    parallel {
-                        stage('Scan backend image') {
-                            steps {
-                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
-                            }
-                        }
-                        stage('Scan frontend image') {
-                            steps {
-                                sh 'trivy image  --no-progress $NEED_TRIVY --severity HIGH,CRITICAL $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION'
-                            }
-                        }
-                    }
-                } 
-                stage('Log into container registry') {
                     steps {
-                        sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                        sh 'trivy image --scanners vuln --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                        sh 'trivy image --scanners vuln --skip-db-update  --no-progress ${NEED_TRIVY} --severity HIGH,CRITICAL ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
                     }
                 } 
                 stage('Push image') {
                     parallel {
                         stage('Push backend image'){
                             steps{
-                                sh 'docker push $CR_BACKEND:$CONTAINER_TAG-$BUILD_VERSION'
-                                sh 'docker push $CR_BACKEND:$CONTAINER_TAG-latest'
+                                withAWS(region: REGION ,credentials:'aws-credential') {
+                                    sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
+                                    sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-$BUILD_VERSION'
+                                    sh 'docker push $BACKEND_IMAGE:$CONTAINER_TAG-latest'
+                                }
+                                
                             }
                         }
                         stage('Push frontend image'){
                             steps{
-                                sh 'docker push $CR_FRONTEND:$CONTAINER_TAG-$BUILD_VERSION'
-                                sh 'docker push $CR_FRONTEND:$CONTAINER_TAG-latest'
+                                withAWS(region: REGION ,credentials:'aws-credential') {
+                                    sh "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_URI}"
+                                    sh 'docker push ${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}'
+                                    sh 'docker push ${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest'
+                                }
+                                
                             }
                         }
                     }

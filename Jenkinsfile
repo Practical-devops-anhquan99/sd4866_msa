@@ -180,8 +180,7 @@ pipeline {
             steps {
                 withAWS(region: REGION ,credentials:'aws-credential') {
                     sh "aws eks update-kubeconfig --region ap-southeast-1 --name devops-eks"
-                    // sh "kubectl apply -f k8s"
-                    sh "kubectl get nodes"
+                    sh "kubectl apply -f k8s"
                 }
             }
         }

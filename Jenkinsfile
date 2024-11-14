@@ -180,7 +180,7 @@ pipeline {
             }
             steps {
                 withAWS(region: REGION ,credentials:'aws-credential') {
-                    sh "aws eks update-kubeconfig --region $REGION --name devops-eks"
+                    sh "aws eks update-kubeconfig --region $REGION --name ${EKS}"
                     sh "find k8s -type f -exec sed -i 's/backend-cr/$BACKEND_IMAGE:$CONTAINER_TAG-latest/g' {} +"
                     sh "find k8s -type f -exec sed -i 's/fronend-cr/${FRONTEND_IMAGE}:${CONTAINER_TAG}-latest/g' {} +" 
                     sh "kubectl apply -f k8s"

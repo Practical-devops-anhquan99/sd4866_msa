@@ -181,8 +181,8 @@ pipeline {
                 withAWS(region: REGION ,credentials:'aws-credential') {
                     withCredentials([string(credentialsId: 'eks', variable: 'EKS')]){
                         sh "aws eks update-kubeconfig --region $REGION --name ${EKS}"
-                        sh "find k8s -type f -exec sed -i 's/backend-cr/${BACKEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +"
-                        sh "find k8s -type f -exec sed -i 's/fronend-cr/${FRONTEND_IMAGE}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +" 
+                        sh "find k8s -type f -exec sed -i 's/backend-cr/${ECR_URI}\/${CR_BACKEND}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +"
+                        sh "find k8s -type f -exec sed -i 's/fronend-cr/${ECR_URI}\/${CR_FRONTEND}:${CONTAINER_TAG}-${BUILD_VERSION}/g' {} +" 
                         sh "kubectl apply -f k8s"
                     }
                 }
